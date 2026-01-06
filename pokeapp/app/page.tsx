@@ -1,44 +1,40 @@
 "use client";
 import PokemonList from "@/components/pokemon_list/page";
-import { Pokemon } from "@/data/pokemon";
-import { useEffect, useState } from "react";
-import Image from "next/image";
+import { usePokemonList } from "@/hooks/pokemon_list_hook";
 
 export default function Home() {
-  const [pokemons, setPokemons] = useState([]);
-  const [loading, setLoading] = useState(true) ;
-
-
-  useEffect(() => {
-    const fetchPokemons = async () => {
-      try {
-        const response = await fetch("https://pokeapi.co/api/v2/pokemon?limit=10");
-        const data = await response.json();
-        const pokemonList = data.results.map((pokemon: Pokemon)=>{
-          const id = pokemon.url.split("/")[6];
-          return {
-            id: id,
-            name: pokemon.name,
-            imagen: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`
-          };
-        });
-        setPokemons(pokemonList);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error al obtener la lista de pokemones", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPokemons();
-  }, []);
+  // usar el hook que se creo
+  const { pokemonsList, isLoading, page, setPage } = usePokemonList();
 
   return (
-    <div>
-      {loading ? <p>Cargando Pokemones ..... </p>
-      : <PokemonList pokemons={pokemons} />}
+    <div className="p-4">
+      {isLoading ? (
+        <p className="text-center">Cargando Pokemones...</p>
+      ) : (
+        <>
+          <PokemonList pokemons={pokemonsList} />
+
+          {/* PAGINACIÓN */}
+          <div className="flex justify-center gap-4 mt-6">
+            <button
+              onClick={() => setPage((p) => Math.max(p - 1, 1))}
+              disabled={page === 1}
+              className="px-4 py-2 border rounded disabled:opacity-50"
+            >
+              Anterior
+            </button>
+
+            <span className="self-center font-medium">Página {page}</span>
+
+            <button
+              onClick={() => setPage((p) => p + 1)}
+              className="px-4 py-2 border rounded"
+            >
+              Siguiente
+            </button>
+          </div>
+        </>
+      )}
     </div>
-    
   );
 }
