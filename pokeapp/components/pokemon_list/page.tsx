@@ -1,5 +1,5 @@
 import { Pokemon } from "@/data/pokemon";
-import Image from "next/image";
+import Image from 'next/image'
 
 interface PokemonListProps {
   pokemons: Pokemon[];
@@ -16,11 +16,14 @@ const PokemonList = ({ pokemons }: PokemonListProps) => {
             key={pokemon.id}
             className="border rounded p-4 flex flex-col items-center"
           >
-            <img
+            <Image
               src={pokemon.imagen}
               alt={pokemon.name}
+              width={128}
+              height={128}
               className="w-32 h-32 mb-2"
-            />
+            ></Image>
+
             <span className="capitalize">{pokemon.name}</span>
           </li>
         ))}
